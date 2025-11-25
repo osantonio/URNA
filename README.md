@@ -4,11 +4,64 @@ Proyecto de API REST construido con FastAPI, SQLModel y PostgreSQL.
 
 ## 📋 Requisitos
 
+### Opción 1: Desarrollo Local
 - Python 3.10 o superior
 - PostgreSQL 12 o superior
 - Visual Studio Build Tools (para Windows, necesario para asyncpg)
 
-## 🚀 Instalación
+### Opción 2: Docker (Recomendado)
+- Docker 20.10 o superior
+- Docker Compose 2.0 o superior
+
+## � Inicio Rápido con Docker (Recomendado)
+
+La forma más rápida de ejecutar el proyecto es usando Docker:
+
+```bash
+# 1. Clonar el repositorio
+cd d:\CODE\CODE\URNA
+
+# 2. Construir y ejecutar los contenedores
+docker-compose up --build
+```
+
+La aplicación estará disponible en:
+- **Aplicación:** http://localhost:8000
+- **Documentación (Swagger):** http://localhost:8000/docs
+- **Documentación (ReDoc):** http://localhost:8000/redoc
+
+### Comandos Útiles de Docker
+
+```bash
+# Ejecutar en segundo plano (detached mode)
+docker-compose up -d
+
+# Ver logs de la aplicación
+docker-compose logs -f web
+
+# Detener los contenedores
+docker-compose down
+
+# Reconstruir las imágenes
+docker-compose build --no-cache
+
+# Acceder al shell del contenedor web
+docker-compose exec web bash
+```
+
+### Configuración de Docker
+
+El archivo `docker-compose.yml` configura un servicio:
+
+1. **web**: Aplicación FastAPI
+   - Puerto: 8000
+   - Hot-reload habilitado para desarrollo
+   - Se conecta a tu base de datos PostgreSQL 17 en Neon
+
+> [!IMPORTANT]
+> Asegúrate de configurar tu `DATABASE_URL` en el archivo `.env` con las credenciales de tu base de datos Neon PostgreSQL 17.
+
+## �🚀 Instalación (Desarrollo Local sin Docker)
 
 ### 1. Clonar el repositorio o crear el proyecto
 

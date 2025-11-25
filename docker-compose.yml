@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # Servicio de aplicación FastAPI
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: urna_web
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/salud\")' || exit 1" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - urna_network
+
+# Red personalizada
+networks:
+  urna_network:
+    driver: bridge
