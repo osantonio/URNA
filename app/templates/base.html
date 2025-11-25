@@ -1,0 +1,56 @@
+<!-- ./app/templates/base.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}URNA{% endblock %} - Sistema Electoral</title>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', path='/favicon.ico') }}">
+
+    <!-- Script crítico para dark mode (debe ejecutarse antes del render para evitar flash) -->
+    <script>
+        // Flowbite-style dark mode handler
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    </script>
+
+    <!-- Tailwind CSS compilado -->
+    <link rel="stylesheet" href="{{ url_for('static', path='/css/output.css') }}">
+
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-background text-foreground transition-colors duration-300">
+    <!-- Navbar modular -->
+    {% include "componentes/navbar.html" %}
+
+    <!-- Mensajes flash -->
+    {% if messages %}
+    <div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 space-y-2 max-w-md w-full px-4">
+        {% for message in messages %}
+        <div class="bg-primary text-primary-foreground px-6 py-3 rounded-lg shadow-lg animate-slide-down">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Contenido principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Scripts de interactividad -->
+    <script src="{{ url_for('static', path='/js/dark-mode.js') }}"></script>
+    <script src="{{ url_for('static', path='/js/dropdown-perfil.js') }}"></script>
+
+    {% block extra_js %}{% endblock %}
+</body>
+
+</html>

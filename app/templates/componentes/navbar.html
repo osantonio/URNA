@@ -1,0 +1,19 @@
+<!-- ./app/templates/componentes/navbar.html -->
+<!-- Navbar empresarial - 3 secciones modulares -->
+<nav class="sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-3 items-center h-14">
+            <!-- Componente 1: Logo -->
+            {% include "componentes/navbar/logo.html" %}
+
+            <!-- Componente 2: Menú -->
+            {% include "componentes/navbar/menu.html" %}
+
+            <!-- Componente 3: Perfil/Autenticación -->
+            <div class="flex items-center justify-end gap-3">
+                {% include "componentes/navbar/darkmode.html" %}
+                {% include "componentes/navbar/perfil.html" %}
+            </div>
+        </div>
+    </div>
+</nav>

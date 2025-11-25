@@ -1,0 +1,117 @@
+<!-- ./app/templates/index.html -->
+{% extends "base.html" %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block content %}
+<div class="min-h-[calc(100vh-3.5rem)] flex flex-col items-center justify-center bg-background p-6">
+    <!-- Hero Section Compacto -->
+    <div class="text-center max-w-3xl mx-auto space-y-6 animate-fade-in">
+        <div
+            class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-4 transform hover:scale-105 transition-transform duration-300">
+            <span class="text-4xl">🗳️</span>
+        </div>
+
+        <h1 class="text-4xl md:text-5xl font-bold text-foreground tracking-tight">
+            Sistema Electoral <span class="text-primary">URNA</span>
+        </h1>
+
+        <p class="text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            Plataforma segura y eficiente para la gestión de procesos electorales.
+            Transparencia y confiabilidad en cada voto.
+        </p>
+
+        <!-- Botones de Acción -->
+        <div class="flex items-center justify-center gap-4 pt-4">
+            {% if not usuario %}
+            <a href="/auth/login"
+                class="px-6 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2">
+                <span>Iniciar Sesión</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3">
+                    </path>
+                </svg>
+            </a>
+            <a href="/auth/registro"
+                class="px-6 py-2.5 bg-secondary text-secondary-foreground font-medium rounded-lg hover:bg-secondary/80 transition-all duration-200 flex items-center gap-2">
+                <span>Registrarse</span>
+            </a>
+            {% else %}
+            <a href="/dashboard"
+                class="px-6 py-2.5 bg-primary text-primary-foreground font-medium rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-sm hover:shadow flex items-center gap-2">
+                <span>Ir al Dashboard</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6">
+                    </path>
+                </svg>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Features Grid Compacto -->
+    <div class="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-16 w-full">
+        <!-- Feature 1 -->
+        <div class="bg-card border border-border p-5 rounded-lg hover:shadow-md transition-all duration-300 group">
+            <div
+                class="w-10 h-10 bg-accent text-accent-foreground rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-foreground mb-1">Seguridad Total</h3>
+            <p class="text-sm text-muted-foreground">Encriptación de extremo a extremo para garantizar la integridad de
+                cada voto.</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="bg-card border border-border p-5 rounded-lg hover:shadow-md transition-all duration-300 group">
+            <div
+                class="w-10 h-10 bg-accent text-accent-foreground rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-foreground mb-1">Resultados en Vivo</h3>
+            <p class="text-sm text-muted-foreground">Monitoreo en tiempo real del proceso electoral con métricas
+                detalladas.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="bg-card border border-border p-5 rounded-lg hover:shadow-md transition-all duration-300 group">
+            <div
+                class="w-10 h-10 bg-accent text-accent-foreground rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+            </div>
+            <h3 class="font-semibold text-foreground mb-1">Gestión de Usuarios</h3>
+            <p class="text-sm text-muted-foreground">Administración eficiente de votantes y roles dentro del sistema.
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fade-in {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .animate-fade-in {
+        animation: fade-in 0.6s ease-out forwards;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,69 @@
+<!-- ./app/templates/componentes/navbar/perfil.html -->
+{% if usuario %}
+<!-- Dropdown de perfil para usuario autenticado -->
+<div class="relative">
+    <button id="profile-button" type="button"
+        class="flex items-center gap-2 p-1 mx-2 rounded-full ring-1 ring-border/30 hover:ring-2 hover:ring-primary/20 transition-all duration-200">
+        <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
+            {{ usuario.nombre[:2].upper() }}
+        </div>
+    </button>
+
+    <!-- Dropdown Menu -->
+    <div id="profile-dropdown"
+        class="hidden absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg py-1 z-50 animate-fade-in">
+        <div class="px-4 py-3 border-b border-border">
+            <p class="text-sm font-medium text-foreground">{{ usuario.nombre }}</p>
+            <p class="text-xs text-muted-foreground mt-0.5">{{ usuario.rol }}</p>
+            <p class="text-xs text-muted-foreground truncate mt-1">{{ usuario.identificacion }}</p>
+        </div>
+        <div class="py-1">
+            <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                </svg>
+                Mi Perfil
+            </a>
+            <a href="#" class="flex items-center gap-2 px-4 py-2 text-sm text-foreground hover:bg-secondary">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z">
+                    </path>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                </svg>
+                Configuración
+            </a>
+        </div>
+        <div class="py-1 border-t border-border">
+            <a href="/auth/logout"
+                class="flex items-center gap-2 px-4 py-2 text-sm text-destructive hover:bg-destructive/10">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                Cerrar Sesión
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- Botones para usuarios no autenticados -->
+<div class="flex items-center gap-2">
+    {% if request.url.path != '/auth/login' %}
+    <a href="/auth/login"
+        class="px-4 py-1.5 text-sm font-medium text-foreground hover:bg-secondary rounded-lg transition-all duration-200">
+        Iniciar Sesión
+    </a>
+    {% endif %}
+
+    {% if request.url.path != '/auth/registro' %}
+    <a href="/auth/registro"
+        class="px-4 py-1.5 text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg transition-all duration-200 shadow-sm hover:shadow-md">
+        Registrarse
+    </a>
+    {% endif %}
+</div>
+{% endif %}

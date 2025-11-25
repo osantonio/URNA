@@ -1,0 +1,25 @@
+<!-- ./app/templates/componentes/navbar/menu.html -->
+<!-- SECCIÓN 2: Menú centrado -->
+<div class="flex items-center justify-center">
+    <div class="hidden md:flex items-center gap-1">
+        {% block nav_items %}
+        <!-- Menú por defecto (se puede sobrescribir en templates hijos) -->
+        <a href="/dashboard"
+            class="px-3 py-1.5 text-sm font-medium text-foreground hover:bg-secondary rounded-lg transition-colors duration-200">
+            Dashboard
+        </a>
+        <a href="/usuarios"
+            class="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors duration-200">
+            Usuarios
+        </a>
+        <a href="/reportes"
+            class="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors duration-200">
+            Reportes
+        </a>
+        <a href="/configuracion"
+            class="px-3 py-1.5 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary rounded-lg transition-colors duration-200">
+            Configuración
+        </a>
+        {% endblock %}
+    </div>
+</div>
