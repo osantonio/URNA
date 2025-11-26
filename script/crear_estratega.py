@@ -16,6 +16,7 @@ sys.path.insert(0, str(proyecto_raiz))
 import asyncio  # noqa: E402
 from app.models.usuario import Usuario, RolUsuario, TipoSexo  # noqa: E402
 from app.config import async_session_maker  # noqa: E402
+from app.utils.auth import hashear_password  # noqa: E402
 
 
 async def crear_estratega():
@@ -42,7 +43,7 @@ async def crear_estratega():
         "mesa_votacion": "1",
         "rol": RolUsuario.ESTRATEGA,
         "asignado_a": None,  # El Estratega no reporta a nadie
-        "password": "estratega2024",  # TODO: Cambiar por hash bcrypt en producción
+        "password": hashear_password("estratega2024"),  # Password hasheado con bcrypt
         "calidad_score": 100,  # Máximo score
     }
 

@@ -12,6 +12,11 @@ from sqlmodel import select
 from app.config import obtener_sesion
 from app.models import Usuario
 from app import templates as jinja_templates
+from app.utils.auth import (
+    verificar_password,
+    guardar_usuario_en_sesion,
+    limpiar_sesion,
+)
 
 router = APIRouter(prefix="/auth", tags=["Autenticación"])
 
@@ -22,7 +27,7 @@ async def mostrar_login(request: Request):
     return jinja_templates.TemplateResponse("auth/login.html", {"request": request})
 
 
-@router.post("/login", response_class=HTMLResponse)
+@router.post("/login")
 async def procesar_login(
     request: Request,
     identificacion: str = Form(...),
@@ -31,9 +36,7 @@ async def procesar_login(
 ):
     """
     Procesa el formulario de login
-
-    TODO: Implementar sesiones con cookies
-    TODO: Implementar hashing de contraseñas con bcrypt
+    Verifica credenciales y guarda usuario en sesión
     """
 
     # Buscar usuario por identificación
@@ -42,7 +45,7 @@ async def procesar_login(
     usuario = resultado.scalar_one_or_none()
 
     # Validar credenciales
-    if not usuario or usuario.password != password:
+    if not usuario or not verificar_password(password, usuario.password):
         return jinja_templates.TemplateResponse(
             "auth/login.html",
             {
@@ -51,15 +54,17 @@ async def procesar_login(
             },
         )
 
-    # Login exitoso - redirigir a dashboard
-    # TODO: Guardar sesión en cookie antes de redirigir
+    # Login exitoso - guardar usuario en sesión
+    guardar_usuario_en_sesion(request, usuario)
+
+    # Redirigir a dashboard
     return RedirectResponse(url="/dashboard", status_code=303)
 
 
 @router.get("/logout")
-async def logout():
+async def logout(request: Request):
     """
     Cierra la sesión del usuario
-    TODO: Implementar limpieza de cookies de sesión
     """
+    limpiar_sesion(request)
     return RedirectResponse(url="/", status_code=303)

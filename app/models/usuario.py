@@ -116,3 +116,10 @@ class Usuario(SQLModel, table=True):
         default_factory=datetime.now,
         description="Fecha de última actualización",
     )
+
+    @property
+    def nombre_completo(self) -> str:
+        """
+        Retorna el nombre completo del usuario (nombres + apellidos)
+        """
+        return f"{self.nombres} {self.apellidos}"

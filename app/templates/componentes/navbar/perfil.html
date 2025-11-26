@@ -5,7 +5,7 @@
     <button id="profile-button" type="button"
         class="flex items-center gap-2 p-1 mx-2 rounded-full ring-1 ring-border/30 hover:ring-2 hover:ring-primary/20 transition-all duration-200">
         <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-sm">
-            {{ usuario.nombre[:2].upper() }}
+            {{ usuario.nombres[:2].upper() }}
         </div>
     </button>
 
@@ -13,8 +13,8 @@
     <div id="profile-dropdown"
         class="hidden absolute right-0 mt-2 w-56 bg-card border border-border rounded-lg shadow-lg py-1 z-50 animate-fade-in">
         <div class="px-4 py-3 border-b border-border">
-            <p class="text-sm font-medium text-foreground">{{ usuario.nombre }}</p>
-            <p class="text-xs text-muted-foreground mt-0.5">{{ usuario.rol }}</p>
+            <p class="text-sm font-medium text-foreground">{{ usuario.nombre_completo }}</p>
+            <p class="text-xs text-muted-foreground mt-0.5">{{ usuario.rol.value }}</p>
             <p class="text-xs text-muted-foreground truncate mt-1">{{ usuario.identificacion }}</p>
         </div>
         <div class="py-1">

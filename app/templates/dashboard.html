@@ -9,7 +9,7 @@
     <div class="mb-8 flex items-center justify-between">
         <div>
             <h1 class="text-2xl font-bold text-foreground tracking-tight">Panel de Control</h1>
-            <p class="text-sm text-muted-foreground mt-1">Bienvenido de nuevo, {{ usuario.nombre }}</p>
+            <p class="text-sm text-muted-foreground mt-1">Bienvenido de nuevo, {{ usuario.nombre_completo }}</p>
         </div>
         <div class="flex items-center gap-3">
             <span
@@ -180,11 +180,11 @@
                 <div class="flex items-center gap-4 mb-4">
                     <div
                         class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                        {{ usuario.nombre[:2].upper() }}
+                        {{ usuario.nombres[:2].upper() }}
                     </div>
                     <div>
-                        <p class="font-medium text-foreground">{{ usuario.nombre }}</p>
-                        <p class="text-xs text-muted-foreground">{{ usuario.rol }}</p>
+                        <p class="font-medium text-foreground">{{ usuario.nombre_completo }}</p>
+                        <p class="text-xs text-muted-foreground">{{ usuario.rol.value }}</p>
                     </div>
                 </div>
                 <div class="space-y-3">

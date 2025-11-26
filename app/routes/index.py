@@ -4,9 +4,11 @@
 Rutas principales de la aplicación (index y salud)
 """
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, Depends
 from fastapi.responses import HTMLResponse
 from app import templates as jinja_templates
+from app.utils.auth import requerir_autenticacion
+from app.models import Usuario
 
 router = APIRouter()
 
@@ -29,35 +31,17 @@ async def verificar_salud():
 
 
 @router.get("/dashboard", response_class=HTMLResponse)
-async def dashboard(request: Request):
+async def dashboard(
+    request: Request, usuario: Usuario = Depends(requerir_autenticacion)
+):
     """
-    Dashboard del usuario
-
-    TODO: Implementar verificación de sesión
-    TODO: Obtener datos del usuario desde la sesión/cookie
-
-    Por ahora, esta es una ruta temporal que muestra datos de ejemplo.
-    En producción, debe verificar que el usuario esté autenticado.
+    Dashboard del usuario autenticado
+    Requiere autenticación - redirige a login si no está autenticado
     """
-    # TODO: Obtener usuario real desde sesión
-    # Por ahora, datos de ejemplo para demostración
-    usuario_ejemplo = {
-        "identificacion": "1000000001",
-        "nombre": "Roberto Carlos Mendoza Vargas",
-        "nombres": "Roberto Carlos",
-        "apellidos": "Mendoza Vargas",
-        "rol": "Estratega",
-        "calidad_score": 100,
-        "telefono": "3001000001",
-        "correoelectronico": "roberto.mendoza@urna.com",
-        "barrio_vereda": "El Poblado",
-        "lugar_votacion": "Universidad Central",
-    }
-
     return jinja_templates.TemplateResponse(
         "dashboard.html",
         {
             "request": request,
-            "usuario": usuario_ejemplo,
+            "usuario": usuario,
         },
     )
