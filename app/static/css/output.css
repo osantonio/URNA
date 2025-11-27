@@ -252,6 +252,9 @@
   .pointer-events-none {
     pointer-events: none;
   }
+  .invisible {
+    visibility: hidden;
+  }
   .visible {
     visibility: visible;
   }
@@ -891,9 +894,6 @@
   }
   .font-mono {
     font-family: var(--font-mono);
-  }
-  .font-sans {
-    font-family: var(--font-sans);
   }
   .text-2xl {
     font-size: var(--text-2xl);
@@ -1564,9 +1564,6 @@
   --chart-4: #9333ea;
   --chart-5: #ec4899;
 }
-.search-count {
-  margin-block-start: 0.5rem;
-}
 .flash-container {
   margin-block: 1rem;
   margin-inline: auto;
@@ -1639,6 +1636,26 @@
 .whatsapp-link:hover, .whatsapp-link:focus {
   color: var(--color-green-500);
   text-decoration: underline;
+}
+@font-face {
+  font-family: "Geist";
+  src: url("/static/fonts/Geist-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/static/fonts/GeistMono-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+.font-geist body {
+  font-family: "Geist", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+.font-mono {
+  font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }
 @property --tw-translate-x {
   syntax: "*";

@@ -46,6 +46,14 @@ async def listar_votantes(
     resultado = await sesion.execute(statement)
     votantes = resultado.scalars().all()
 
+    ids_referentes = list({v.asignado_a for v in votantes if getattr(v, "asignado_a", None)})
+    referentes = {}
+    if ids_referentes:
+        ref_stmt = select(Usuario).where(Usuario.identificacion.in_(ids_referentes))
+        ref_res = await sesion.execute(ref_stmt)
+        ref_users = ref_res.scalars().all()
+        referentes = {u.identificacion: u for u in ref_users}
+
     messages = request.session.pop("flash_messages", [])
 
     return jinja_templates.TemplateResponse(
@@ -56,6 +64,7 @@ async def listar_votantes(
             "total": len(votantes),
             "messages": messages,
             "q": q,
+            "referentes": referentes,
         },
     )
 

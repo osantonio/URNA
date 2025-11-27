@@ -68,10 +68,6 @@
     --chart-5: #ec4899;
 }
 
-.search-count {
-    margin-block-start: 0.5rem;
-}
-
 /* ---------------------------------------------
    Estilos ESPECÍFICOS para Mensajes Flash
    Paleta: usa variables del sistema para garantizar alto contraste
@@ -158,4 +154,98 @@
 .whatsapp-link:focus {
     color: var(--color-green-500);
     text-decoration: underline;
+}
+
+@font-face {
+    font-family: "Geist";
+    src: url("/static/fonts/Geist-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Geist Mono";
+    src: url("/static/fonts/GeistMono-Variable.woff2") format("woff2");
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* --------------------------------------------------------------
+   Fuentes locales disponibles en /static/fonts
+
+   Propósito y uso:
+   - "Geist": tipografía base para todo el sistema (texto UI general)
+   - "Geist Mono": tipografía monoespaciada para badges, códigos y números
+
+   Consideraciones de rendimiento:
+   - Se usan fuentes variables (WOFF2) para cubrir pesos 100–900 con un único archivo
+   - font-display: swap para evitar bloqueos de render; el sistema usa fallbacks
+   - Cargar pesos estáticos adicionales Solo si algún componente específico lo exige
+
+   Fallback recomendado:
+   - Sans: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Helvetica Neue, Arial
+   - Mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, Liberation Mono, Courier New
+
+   Documentación de archivos de fuente (formato WOFF2):
+   - Geist-Variable.woff2        | Familia: Geist       | Peso: 100–900 | Estilo: normal | Uso: tipografía base
+   - GeistMono-Variable.woff2    | Familia: Geist Mono  | Peso: 100–900 | Estilo: normal | Uso: monoespaciada
+
+   Archivos adicionales disponibles (no referenciados por defecto para optimizar carga):
+   Sans (Geist):
+   - Geist-Thin.woff2            (100, normal)
+   - Geist-ThinItalic.woff2      (100, italic)
+   - Geist-ExtraLight.woff2      (200, normal)
+   - Geist-ExtraLightItalic.woff2(200, italic)
+   - Geist-Light.woff2           (300, normal)
+   - Geist-LightItalic.woff2     (300, italic)
+   - Geist-Regular.woff2         (400, normal)
+   - Geist-RegularItalic.woff2   (400, italic)
+   - Geist-Medium.woff2          (500, normal)
+   - Geist-MediumItalic.woff2    (500, italic)
+   - Geist-SemiBold.woff2        (600, normal)
+   - Geist-SemiBoldItalic.woff2  (600, italic)
+   - Geist-Bold.woff2            (700, normal)
+   - Geist-BoldItalic.woff2      (700, italic)
+   - Geist-ExtraBold.woff2       (800, normal)
+   - Geist-ExtraBoldItalic.woff2 (800, italic)
+   - Geist-Black.woff2           (900, normal)
+   - Geist-BlackItalic.woff2     (900, italic)
+   - Geist[wght].woff2           (variable, normal)
+   - Geist-Italic[wght].woff2    (variable, italic)
+
+   Mono (Geist Mono):
+   - GeistMono-Thin.woff2        (100, normal)
+   - GeistMono-ThinItalic.woff2  (100, italic)
+   - GeistMono-ExtraLight.woff2  (200, normal)
+   - GeistMono-ExtraLightItalic.woff2 (200, italic)
+   - GeistMono-Light.woff2       (300, normal)
+   - GeistMono-LightItalic.woff2 (300, italic)
+   - GeistMono-Regular.woff2     (400, normal)
+   - GeistMono-Medium.woff2      (500, normal)
+   - GeistMono-MediumItalic.woff2(500, italic)
+   - GeistMono-SemiBold.woff2    (600, normal)
+   - GeistMono-SemiBoldItalic.woff2 (600, italic)
+   - GeistMono-Bold.woff2        (700, normal)
+   - GeistMono-BoldItalic.woff2  (700, italic)
+   - GeistMono-ExtraBold.woff2   (800, normal)
+   - GeistMono-ExtraBoldItalic.woff2 (800, italic)
+   - GeistMono-Black.woff2       (900, normal)
+   - GeistMono-BlackItalic.woff2 (900, italic)
+   - GeistMono[wght].woff2       (variable, normal)
+   - GeistMono-Italic[wght].woff2(variable, italic)
+
+   Nota:
+   - Para usar un peso específico estático, declare un @font-face adicional
+     con font-family: "Geist" (o "Geist Mono"), font-weight y font-style apropiados
+     apuntando al archivo correspondiente en /static/fonts/
+-------------------------------------------------------------- */
+
+.font-geist body {
+    font-family: "Geist", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Noto Sans", "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+.font-mono {
+    font-family: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
 }

@@ -3,7 +3,7 @@
 {% block title %}Gestión de Votantes{% endblock %}
 
 {% block content %}
-<div class="min-h-screen bg-background font-sans text-foreground">
+<div class="min-h-screen bg-background text-foreground">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
 
         <!-- Header -->
@@ -61,6 +61,9 @@
                             </th>
                             <th scope="col" class="px-6 py-4 font-semibold text-foreground">
                                 Rol
+                            </th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-foreground">
+                                Referido de:
                             </th>
                             <th scope="col" class="px-6 py-4 font-semibold text-right text-foreground">
                                 Acciones
@@ -126,6 +129,20 @@
                                     {{ votante.rol.value }}
                                 </span>
                             </td>
+                            <td class="px-6 py-4">
+                                {% if votante.asignado_a and referentes.get(votante.asignado_a) %}
+                                <div class="ref-name font-medium text-foreground"
+                                     data-ref-fullname="{{ referentes[votante.asignado_a].nombre_completo }}"
+                                     data-ref-nombres="{{ referentes[votante.asignado_a].nombres }}"
+                                     data-ref-apellidos="{{ referentes[votante.asignado_a].apellidos }}">
+                                    {{ referentes[votante.asignado_a].nombre_completo }}
+                                </div>
+                                {% elif votante.asignado_a %}
+                                <span class="text-muted-foreground text-xs">{{ votante.asignado_a }}</span>
+                                {% else %}
+                                <span class="text-muted-foreground/30">-</span>
+                                {% endif %}
+                            </td>
                             <td class="px-6 py-4 text-right">
                                 <div
                                     class="flex justify-end gap-3 opacity-20 group-hover:opacity-100 transition-opacity">
@@ -160,7 +177,7 @@
                         </tr>
                         {% endfor %}
                         <tr id="no-results" class="hidden">
-                            <td colspan="6" class="px-6 py-4 text-center text-muted-foreground">Sin resultados</td>
+                            <td colspan="7" class="px-6 py-4 text-center text-muted-foreground">Sin resultados</td>
                         </tr>
                     </tbody>
                 </table>
@@ -169,7 +186,7 @@
             <!-- Footer -->
             <div class="border-t border-border bg-muted/20 px-6 py-4">
                 <p class="text-sm text-muted-foreground">
-                    Total de registros: <span id="search-count" class="mt-2 text-xs text-muted-foreground search-count"> </span>
+                    Total de registros: <span id="search-count" class="mt-2 text-xs text-muted-foreground margin-block-start: 0.5rem"> </span>
                 </p>
             </div>
         </div>
@@ -271,5 +288,23 @@
     }
 
     wireCopyIds();
+
+    function renderShortRefNames() {
+        const refCells = Array.from(document.querySelectorAll('#votantes-body .ref-name'));
+        refCells.forEach(el => {
+            const nombres = (el.getAttribute('data-ref-nombres') || '').trim();
+            const apellidos = (el.getAttribute('data-ref-apellidos') || '').trim();
+            const full = (el.getAttribute('data-ref-fullname') || '').trim();
+            const firstName = nombres ? nombres.split(/\s+/)[0] : '';
+            const firstLast = apellidos ? apellidos.split(/\s+/)[0] : '';
+            el.textContent = `${firstName} ${firstLast}`.trim();
+            const hidden = document.createElement('span');
+            hidden.className = 'hidden';
+            hidden.textContent = full;
+            el.appendChild(hidden);
+        });
+    }
+
+    renderShortRefNames();
 </script>
 {% endblock %}
