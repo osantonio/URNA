@@ -30,21 +30,26 @@
     <!-- Navbar modular -->
     {% include "componentes/navbar.html" %}
 
-    <!-- Mensajes flash -->
+    <!-- Contenido principal -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!--
+        Configuración exclusiva de Mensajes Flash
+        Paleta: usa `--color-primary` y `--color-primary-foreground` para alto contraste
+        Propósito: contenedor al final del documento, sin posición fija, evita superposición
+        Nota: mantener estilos y clases separados del tema principal para modularidad
+    -->
     {% if messages %}
-    <div class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 space-y-2 max-w-md w-full px-4">
+    <div class="flash-container" role="status" aria-live="polite">
         {% for message in messages %}
-        <div class="bg-primary text-primary-foreground px-6 py-3 rounded-lg shadow-lg animate-slide-down">
+        <div class="flash-badge">
             {{ message }}
         </div>
         {% endfor %}
     </div>
     {% endif %}
-
-    <!-- Contenido principal -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
 
     <!-- Scripts de interactividad -->
     <script src="{{ url_for('static', path='/js/dark-mode.js') }}"></script>

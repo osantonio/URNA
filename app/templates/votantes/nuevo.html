@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Nuevo Votante{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background text-foreground">
+    <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-10">
+        <div class="bg-card border border-border rounded-lg shadow-sm overflow-hidden">
+            <div class="px-6 py-5 border-b border-border flex items-center justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold tracking-tight">Registrar Nuevo Votante</h1>
+                    <p class="text-sm text-muted-foreground">Complete los datos obligatorios del votante.</p>
+                </div>
+                <a href="/votantes/" class="text-sm text-muted-foreground hover:text-primary transition-colors">Volver</a>
+            </div>
+
+            <div class="px-6 py-6">
+                {% if error %}
+                <div class="mb-4 p-3 rounded border border-destructive/20 bg-destructive/10 text-destructive text-sm">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+                <form action="/votantes/nuevo" method="post" class="space-y-6">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label for="identificacion" class="text-xs font-medium">Documento de identidad</label>
+                            <input id="identificacion" name="identificacion" type="text" required pattern="[0-9]{6,10}"
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring"
+                                   placeholder="Ej: 1234567890">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="nombres" class="text-xs font-medium">Nombres</label>
+                            <input id="nombres" name="nombres" type="text" required
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring"
+                                   placeholder="Nombres completos">
+                        </div>
+                        <div class="space-y-1.5 md:col-span-2">
+                            <label for="apellidos" class="text-xs font-medium">Apellidos</label>
+                            <input id="apellidos" name="apellidos" type="text" required
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring"
+                                   placeholder="Apellidos completos">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label for="telefono" class="text-xs font-medium">Teléfono</label>
+                            <input id="telefono" name="telefono" type="tel" pattern="3[0-9]{9}"
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring"
+                                   placeholder="Ej: 3001234567">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="edad" class="text-xs font-medium">Edad</label>
+                            <input id="edad" name="edad" type="number" min="18" max="120"
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring"
+                                   placeholder="Ej: 35">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label for="sexo" class="text-xs font-medium">Sexo</label>
+                            <select id="sexo" name="sexo"
+                                    class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring">
+                                <option value="">Seleccione...</option>
+                                {% for s in sexo_opciones %}
+                                <option value="{{ s }}">{{ s }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="correoelectronico" class="text-xs font-medium">Correo electrónico</label>
+                            <input id="correoelectronico" name="correoelectronico" type="email"
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring"
+                                   placeholder="correo@ejemplo.com">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-1.5">
+                            <label for="barrio_vereda" class="text-xs font-medium">Barrio/Vereda</label>
+                            <input id="barrio_vereda" name="barrio_vereda" type="text"
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring">
+                        </div>
+                        <div class="space-y-1.5">
+                            <label for="lugar_votacion" class="text-xs font-medium">Puesto de votación</label>
+                            <input id="lugar_votacion" name="lugar_votacion" type="text"
+                                   class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring">
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="mesa_votacion" class="text-xs font-medium">Mesa</label>
+                        <input id="mesa_votacion" name="mesa_votacion" type="text"
+                               class="block w-full rounded-md border border-input bg-background py-2 px-3 text-sm focus:border-ring focus:ring-1 focus:ring-ring">
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3">
+                        <a href="/votantes/" class="px-4 py-2 text-sm rounded-md border border-border hover:bg-secondary transition-colors">Cancelar</a>
+                        <button type="submit" class="px-4 py-2 text-sm rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-colors">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

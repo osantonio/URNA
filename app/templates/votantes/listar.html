@@ -28,19 +28,17 @@
         </div>
 
         <!-- Toolbar: Search -->
-        <div class="mb-6 flex flex-col sm:flex-row gap-4">
-            <div class="relative w-full flex-1">
+        <div class="mb-6 search-toolbar flex flex-col gap-4">
+            <form method="get" action="/votantes/" class="relative w-full flex-1">
                 <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                    <svg class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    <svg class="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                 </div>
-                <input type="search"
+                <input id="search-input" type="search" name="q" value="{{ q }}" aria-label="Buscar votantes"
                     class="block w-full rounded-md border border-input bg-background py-4 pl-10 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring transition-colors"
                     placeholder="Buscar por nombre, cédula o teléfono...">
-            </div>
+            </form>
         </div>
 
         <!-- Table Container -->
@@ -51,9 +49,6 @@
                         <tr>
                             <th scope="col" class="px-6 py-4 font-semibold text-foreground">
                                 Votante
-                            </th>
-                            <th scope="col" class="px-6 py-4 font-semibold text-foreground">
-                                Identificación
                             </th>
                             <th scope="col" class="px-6 py-4 font-semibold text-foreground">
                                 Contacto
@@ -72,28 +67,33 @@
                             </th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-border bg-card">
+                    <tbody id="votantes-body" class="divide-y divide-border bg-card">
                         {% for votante in votantes %}
                         <tr class="group hover:bg-muted/50 transition-colors">
                             <td class="px-6 py-4">
-                                <div class="font-medium text-foreground">{{ votante.nombre_completo }}</div>
-                            </td>
-                            <td class="px-6 py-4">
-                                <div
-                                    class="font-mono text-xs text-muted-foreground bg-secondary/50 px-2 py-1 rounded w-fit">
-                                    {{ votante.identificacion }}
+                                <div class="flex items-center gap-2">
+                                    <div class="font-medium text-foreground" data-fullname="{{ votante.nombre_completo }}" data-nombres="{{ votante.nombres }}" data-apellidos="{{ votante.apellidos }}">
+                                        {{ votante.nombre_completo }}
+                                    </div>
+                                    <div class="relative">
+                                        <div class="id-badge id-badge--compact" data-id="{{ votante.identificacion }}" tabindex="0" role="button" aria-label="Copiar identificación">
+                                            <span class="id-prefix">CC</span><span class="id-number">{{ votante.identificacion }}</span>
+                                        </div>
+                                        <span class="copy-tooltip" aria-hidden="true">Copiado</span>
+                                    </div>
                                 </div>
                             </td>
                             <td class="px-6 py-4">
-                                {% if votante.telefono %}
-                                <div
-                                    class="flex items-center gap-2 text-muted-foreground group-hover:text-foreground transition-colors">
-                                    <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                {% if votante.telefono and votante.telefono|length == 10 and votante.telefono.startswith('3') %}
+                                <a href="https://wa.me/57{{ votante.telefono }}" target="_blank" rel="noopener noreferrer" aria-label="Abrir WhatsApp"
+                                   class="whatsapp-link">
+                                    <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                        <path d="M20.52 3.48A11.8 11.8 0 0012.01.5C5.76.5.99 5.27 1 11.52a11.5 11.5 0 001.52 5.8L1 23l5.83-1.48a11.78 11.78 0 005.2 1.25h.01c6.25 0 11.02-4.77 11.02-11.02 0-2.95-1.15-5.72-3.55-8.27zM12.04 21.02h-.01a9.74 9.74 0 01-4.97-1.36l-.36-.21-3.45.88.92-3.37-.24-.35A9.45 9.45 0 012.98 11.5c0-5.03 4.03-9.06 9.06-9.06 2.43 0 4.7.95 6.42 2.68a9.02 9.02 0 012.65 6.37c0 5.03-4.03 9.06-9.06 9.06zm5.41-7.06c-.3-.15-1.77-.87-2.04-.97-.27-.1-.47-.15-.67.15-.2.29-.77.96-.95 1.16-.17.2-.35.22-.65.07-.3-.15-1.26-.46-2.4-1.47-.89-.79-1.49-1.76-1.66-2.06-.17-.3-.02-.47.13-.62.14-.14.3-.35.45-.52.15-.17.2-.29.3-.49.1-.2.05-.37-.02-.52-.07-.15-.67-1.62-.92-2.22-.24-.6-.49-.51-.67-.51h-.57c-.2 0-.52.07-.8.37-.27.29-1.05 1.03-1.05 2.52s1.08 2.92 1.23 3.12c.15.2 2.13 3.25 5.17 4.55.72.31 1.29.49 1.73.62.73.23 1.4.2 1.93.12.59-.09 1.77-.72 2.02-1.41.25-.69.25-1.28.18-1.41-.07-.13-.27-.2-.57-.34z" />
                                     </svg>
                                     <span>{{ votante.telefono }}</span>
-                                </div>
+                                </a>
+                                {% elif votante.telefono %}
+                                <span class="text-muted-foreground text-xs">{{ votante.telefono }}</span>
                                 {% else %}
                                 <span class="text-muted-foreground/40 italic text-xs">Sin registro</span>
                                 {% endif %}
@@ -159,6 +159,9 @@
                             </td>
                         </tr>
                         {% endfor %}
+                        <tr id="no-results" class="hidden">
+                            <td colspan="6" class="px-6 py-4 text-center text-muted-foreground">Sin resultados</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -166,10 +169,107 @@
             <!-- Footer -->
             <div class="border-t border-border bg-muted/20 px-6 py-4">
                 <p class="text-sm text-muted-foreground">
-                    Total de registros: <span class="font-medium text-foreground">{{ total }}</span>
+                    Total de registros: <span id="search-count" class="mt-2 text-xs text-muted-foreground search-count"> </span>
                 </p>
             </div>
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    const input = document.getElementById('search-input');
+    const tbody = document.getElementById('votantes-body');
+    const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.id !== 'no-results');
+    const noResults = document.getElementById('no-results');
+    const countEl = document.getElementById('search-count');
+
+    function normalize(s) {
+        return (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+    }
+
+    let timer = null;
+    function applyFilter() {
+        const q = normalize(input.value);
+        let visible = 0;
+        if (!q) {
+            rows.forEach(r => r.classList.remove('hidden'));
+            visible = rows.length;
+        } else {
+            rows.forEach(r => {
+                const text = normalize(r.textContent);
+                const match = text.indexOf(q) !== -1;
+                if (match) {
+                    r.classList.remove('hidden');
+                    visible += 1;
+                } else {
+                    r.classList.add('hidden');
+                }
+            });
+        }
+        if (noResults) {
+            if (visible === 0) noResults.classList.remove('hidden'); else noResults.classList.add('hidden');
+        }
+        if (countEl) {
+            countEl.textContent = visible ? `${visible} resultado(s)` : '0 resultados';
+        }
+    }
+
+    function debouncedFilter() {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(applyFilter, 200);
+    }
+
+    function renderShortNames() {
+        const nameCells = Array.from(document.querySelectorAll('#votantes-body .font-medium.text-foreground'));
+        nameCells.forEach(el => {
+            const nombres = (el.getAttribute('data-nombres') || '').trim();
+            const apellidos = (el.getAttribute('data-apellidos') || '').trim();
+            const full = (el.getAttribute('data-fullname') || '').trim();
+            const firstName = nombres ? nombres.split(/\s+/)[0] : '';
+            const firstLast = apellidos ? apellidos.split(/\s+/)[0] : '';
+            el.textContent = `${firstName} ${firstLast}`.trim();
+            const hidden = document.createElement('span');
+            hidden.className = 'hidden';
+            hidden.textContent = full;
+            el.appendChild(hidden);
+        });
+    }
+
+    renderShortNames();
+
+    if (input) {
+        input.addEventListener('input', debouncedFilter);
+        applyFilter();
+    }
+
+    function wireCopyIds() {
+        const badges = Array.from(document.querySelectorAll('.id-badge'));
+        badges.forEach(badge => {
+            const tooltip = badge.parentElement.querySelector('.copy-tooltip');
+            const copyNumber = () => {
+                const id = badge.getAttribute('data-id') || '';
+                if (!id) return;
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(id).then(() => {
+                        if (tooltip) {
+                            tooltip.classList.add('visible');
+                            setTimeout(() => tooltip.classList.remove('visible'), 1200);
+                        }
+                    }).catch(() => {});
+                }
+            };
+            badge.addEventListener('click', copyNumber);
+            badge.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    copyNumber();
+                }
+            });
+        });
+    }
+
+    wireCopyIds();
+</script>
 {% endblock %}

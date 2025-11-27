@@ -5,8 +5,11 @@ Middleware para inyectar el usuario autenticado en el contexto de todos los temp
 """
 
 from typing import Callable
+import os
+import time
 from fastapi import Request, Response
 from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.responses import RedirectResponse
 from sqlmodel import select
 
 from app.config import obtener_sesion
@@ -30,10 +33,23 @@ class UsuarioContextMiddleware(BaseHTTPMiddleware):
         Returns:
             Response procesada
         """
-        # Inicializar usuario como None
         request.state.usuario = None
+        """
+        idle_timeout se encarga de cerrar la sesion
+        si el usuario no ha hecho nada, durante los
+        segundos expresados en  idle_timeout.
+        """
+        idle_timeout = int(os.getenv("SESSION_IDLE_TIMEOUT_SECONDS", "2700"))
+        path = request.url.path
+        excluded = path.startswith("/static") or path.startswith("/auth/login")
+        now = int(time.time())
+        last = request.session.get("ultimo_uso")
 
-        # Intentar obtener usuario desde sesión
+        if last and now - last > idle_timeout:
+            request.session.clear()
+            if not excluded:
+                return RedirectResponse(url="/auth/login", status_code=303)
+
         usuario_id = request.session.get("usuario_id")
 
         if usuario_id:
@@ -56,6 +72,8 @@ class UsuarioContextMiddleware(BaseHTTPMiddleware):
                 # Esto evita que errores de BD rompan toda la aplicación
                 pass
 
-        # Continuar con el siguiente middleware/handler
+        if usuario_id:
+            request.session["ultimo_uso"] = now
+
         response = await call_next(request)
         return response

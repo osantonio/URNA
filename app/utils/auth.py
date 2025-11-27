@@ -5,6 +5,7 @@ Utilidades de autenticación para gestión de sesiones y contraseñas
 """
 
 from typing import Optional
+import time
 from fastapi import Request, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
@@ -55,6 +56,7 @@ def guardar_usuario_en_sesion(request: Request, usuario: Usuario) -> None:
     request.session["usuario_id"] = usuario.identificacion
     request.session["usuario_rol"] = usuario.rol.value if usuario.rol else None
     request.session["usuario_nombre"] = usuario.nombre_completo
+    request.session["ultimo_uso"] = int(time.time())
 
 
 async def obtener_usuario_desde_sesion(
