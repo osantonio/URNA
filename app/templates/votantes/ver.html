@@ -157,8 +157,7 @@
                         <tr>
                             <th scope="col" class="px-6 py-4 font-semibold text-foreground">Votante</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-foreground">Contacto</th>
-                            <th scope="col" class="px-6 py-4 font-semibold text-foreground">Puesto</th>
-                            <th scope="col" class="px-6 py-4 font-semibold text-center text-foreground">Mesa</th>
+                            <th scope="col" class="px-6 py-4 font-semibold text-foreground">Puesto y Mesa</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-foreground">Rol</th>
                             <th scope="col" class="px-6 py-4 font-semibold text-right text-foreground">Acciones</th>
                         </tr>
@@ -166,7 +165,7 @@
                     <tbody id="referidos-body" class="divide-y divide-border bg-card">
                         {% for rol, personas in referidos_agrupados.items() %}
                         <tr class="tree-group-row bg-muted/30" data-rol="{{ rol }}">
-                            <td colspan="6" class="px-6 py-3">
+                            <td colspan="5" class="px-6 py-3">
                                 <div class="flex items-center gap-2 cursor-pointer font-semibold"
                                     onclick="toggleGroupRow(this)">
                                     <span class="tree-group__icon text-muted-foreground">[▼]</span>
@@ -212,21 +211,23 @@
                                 {% endif %}
                             </td>
                             <td class="px-6 py-4">
-                                {% if persona.lugar_votacion %}
-                                <span class="text-foreground text-xs">{{ persona.lugar_votacion }}</span>
-                                {% else %}
-                                <span class="text-muted-foreground/40 italic text-xs">—</span>
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-4 text-center">
-                                {% if persona.mesa_votacion %}
-                                <span
-                                    class="inline-flex items-center justify-center rounded border border-border bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">
-                                    {{ persona.mesa_votacion }}
-                                </span>
-                                {% else %}
-                                <span class="text-muted-foreground/40 italic text-xs">—</span>
-                                {% endif %}
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    {% if persona.lugar_votacion %}
+                                    <span class="text-foreground text-xs font-medium">{{ persona.lugar_votacion }}</span>
+                                    {% else %}
+                                    <span class="text-muted-foreground/40 italic text-xs">Puesto no registrado</span>
+                                    {% endif %}
+                                    
+                                    {% if persona.mesa_votacion %}
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="inline-flex items-center justify-center rounded border border-border bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">
+                                            {{ persona.mesa_votacion }}
+                                        </span>
+                                    </div>
+                                    {% else %}
+                                    <span class="text-muted-foreground/40 italic text-[10px]">Sin mesa</span>
+                                    {% endif %}
+                                </div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border
@@ -349,7 +350,7 @@
         tr.dataset.parent = parentId;
         tr.dataset.nivel = nivel;
         tr.innerHTML = `
-            <td colspan="6" class="px-6 py-3" style="padding-left: ${nivel * 1.5 + 1.5}rem;">
+            <td colspan="5" class="px-6 py-3" style="padding-left: ${nivel * 1.5 + 1.5}rem;">
                 <div class="flex items-center gap-2 cursor-pointer font-semibold" onclick="toggleGroupRow(this)">
                     <span class="tree-group__icon text-muted-foreground">[▼]</span>
                     <span>👥 ${rol}s (${count})</span>
@@ -378,13 +379,20 @@
                 ? `<span class="text-muted-foreground text-xs">${persona.telefono}</span>`
                 : `<span class="text-muted-foreground/40 italic text-xs">Sin registro</span>`;
 
-        const puesto = persona.lugar_votacion
-            ? `<span class="text-foreground text-xs">${persona.lugar_votacion}</span>`
-            : `<span class="text-muted-foreground/40 italic text-xs">—</span>`;
-
-        const mesa = persona.mesa_votacion
-            ? `<span class="inline-flex items-center justify-center rounded border border-border bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground">${persona.mesa_votacion}</span>`
-            : `<span class="text-muted-foreground/40 italic text-xs">—</span>`;
+        const puestoMesa = `
+            <div class="flex items-center gap-2 flex-wrap">
+                ${persona.lugar_votacion
+                ? `<span class="text-foreground text-xs font-medium">${persona.lugar_votacion}</span>`
+                : `<span class="text-muted-foreground/40 italic text-xs">Puesto no registrado</span>`
+            }
+                ${persona.mesa_votacion
+                ? `<div class="flex items-center gap-1.5">
+                        <span class="inline-flex items-center justify-center rounded border border-border bg-secondary px-1.5 py-0.5 text-xs font-medium text-secondary-foreground">${persona.mesa_votacion}</span>
+                       </div>`
+                : `<span class="text-muted-foreground/40 italic text-[10px]">Sin mesa</span>`
+            }
+            </div>
+        `;
 
         const rolClass = persona.rol === 'Estratega' ? 'bg-purple-50 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800'
             : persona.rol === 'Coordinador' ? 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800'
@@ -409,8 +417,7 @@
                 </div>
             </td>
             <td class="px-6 py-4">${telefono}</td>
-            <td class="px-6 py-4">${puesto}</td>
-            <td class="px-6 py-4 text-center">${mesa}</td>
+            <td class="px-6 py-4">${puestoMesa}</td>
             <td class="px-6 py-4">
                 <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium border ${rolClass}">
                     ${persona.rol}

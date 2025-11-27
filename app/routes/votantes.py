@@ -331,6 +331,8 @@ async def obtener_referidos_directos_agrupados(
             {
                 "identificacion": ref.identificacion,
                 "nombre_completo": ref.nombre_completo,
+                "nombres": ref.nombres,
+                "apellidos": ref.apellidos,
                 "rol": ref.rol.value,
                 "mesa_votacion": ref.mesa_votacion,
                 "lugar_votacion": ref.lugar_votacion,
