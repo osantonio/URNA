@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+
+{% block title %}Doc: Búsqueda{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background text-foreground">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <!-- Encabezado principal -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold mb-3">Sistema de Búsqueda de Votantes</h1>
+      <p class="text-lg text-muted-foreground">Documentación completa sobre la arquitectura, sintaxis y uso del motor de
+        búsqueda en tiempo real</p>
+    </div>
+
+    <!-- Sección: Introducción -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">📋 Introducción</h2>
+      <p class="mb-3">
+        El sistema de búsqueda de votantes es un motor de filtrado <strong>del lado del cliente</strong> que permite
+        realizar búsquedas complejas
+        utilizando una sintaxis intuitiva basada en pares <code
+          class="px-2 py-1 bg-muted rounded text-sm">campo: valor</code>.
+      </p>
+      <div class="bg-accent/10 border-l-4 border-accent p-4 rounded">
+        <p class="text-sm">
+          <strong>💡 Ventaja principal:</strong> Búsqueda instantánea sin necesidad de consultas al servidor,
+          ideal para conjuntos de datos de tamaño medio (hasta ~1000 registros).
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección: Arquitectura -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">🏗️ Arquitectura del Sistema</h2>
+
+      <h3 class="text-xl font-medium mb-3 mt-6">Componentes Principales</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-border">
+          <thead class="bg-muted">
+            <tr>
+              <th class="border border-border px-4 py-2 text-left font-semibold">Componente</th>
+              <th class="border border-border px-4 py-2 text-left font-semibold">Función</th>
+              <th class="border border-border px-4 py-2 text-left font-semibold">Ubicación</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-border px-4 py-2"><code class="text-sm">parseFilters()</code></td>
+              <td class="border border-border px-4 py-2">Interpreta la sintaxis de búsqueda y separa filtros de tokens
+                libres</td>
+              <td class="border border-border px-4 py-2 text-xs">listar.html:220-235</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><code class="text-sm">keyMap</code></td>
+              <td class="border border-border px-4 py-2">Normaliza alias de campos a claves internas consistentes</td>
+              <td class="border border-border px-4 py-2 text-xs">listar.html:237-247</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><code class="text-sm">getRowData()</code></td>
+              <td class="border border-border px-4 py-2">Extrae y normaliza datos de cada fila de la tabla</td>
+              <td class="border border-border px-4 py-2 text-xs">listar.html:249-260</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><code class="text-sm">applyFilter()</code></td>
+              <td class="border border-border px-4 py-2">Motor principal que aplica filtros y tokens con lógica AND</td>
+              <td class="border border-border px-4 py-2 text-xs">listar.html:262-295</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><code class="text-sm">renderPagination()</code></td>
+              <td class="border border-border px-4 py-2">Controla la visibilidad de filas según la página activa</td>
+              <td class="border border-border px-4 py-2 text-xs">listar.html:297-310</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 class="text-xl font-medium mb-3 mt-6">Flujo de Procesamiento</h3>
+      <div class="bg-muted p-4 rounded-lg">
+        <pre class="text-sm overflow-x-auto">
+```mermaid
+flowchart LR
+  A[Usuario ingresa búsqueda] --> B[parseFilters]
+  B --> C{¿Tiene filtros?}
+  C -->|Sí| D[keyMap normaliza campos]
+  C -->|No| E[Solo tokens libres]
+  D --> F[getRowData extrae datos]
+  E --> F
+  F --> G[applyFilter evalúa cada fila]
+  G --> H{¿Coincide?}
+  H -->|Sí| I[Mostrar fila]
+  H -->|No| J[Ocultar fila]
+  I --> K[renderBadges actualiza UI]
+  J --> K
+  K --> L[renderPagination controla páginas]
+  L --> M[Resultado final visible]
+```
+        </pre>
+      </div>
+    </section>
+
+    <!-- Sección: Sintaxis -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">📝 Sintaxis de Búsqueda</h2>
+
+      <h3 class="text-xl font-medium mb-3">Formato General</h3>
+      <div class="bg-muted p-4 rounded-lg mb-4">
+        <code class="text-sm">campo1: valor1, campo2: valor2, token_libre</code>
+      </div>
+
+      <h3 class="text-xl font-medium mb-3 mt-6">Campos Disponibles y Alias</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full border-collapse border border-border">
+          <thead class="bg-muted">
+            <tr>
+              <th class="border border-border px-4 py-2 text-left font-semibold">Campo</th>
+              <th class="border border-border px-4 py-2 text-left font-semibold">Alias Aceptados</th>
+              <th class="border border-border px-4 py-2 text-left font-semibold">Descripción</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>nombre</strong></td>
+              <td class="border border-border px-4 py-2"><code
+                  class="text-xs">votante, nombre, nombres, apellidos</code></td>
+              <td class="border border-border px-4 py-2">Busca en nombre completo del votante</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>identificacion</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">identificacion, id, cc</code></td>
+              <td class="border border-border px-4 py-2">Número de cédula o identificación</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>telefono</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">telefono</code></td>
+              <td class="border border-border px-4 py-2">Número de teléfono del votante</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>puesto</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">puesto, lugar, lugar_votacion</code></td>
+              <td class="border border-border px-4 py-2">Lugar de votación asignado</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>mesa</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">mesa, mesa_votacion</code></td>
+              <td class="border border-border px-4 py-2">Número de mesa electoral</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>rol</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">rol</code></td>
+              <td class="border border-border px-4 py-2">Rol del usuario (líder, coordinador, etc.)</td>
+            </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>referido</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">referido, asignado_a, referente</code>
+              </td>
+              <td class="border border-border px-4 py-2">Identificación del referente asignado</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="bg-blue-500/10 border-l-4 border-blue-500 p-4 rounded mt-4">
+        <p class="text-sm">
+          <strong>ℹ️ Nota:</strong> La búsqueda es <strong>insensible a mayúsculas y acentos</strong>.
+          Por ejemplo, <code>nombre: jose</code> encontrará "José", "JOSE" y "jose".
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección: Ejemplos -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">💡 Ejemplos Prácticos</h2>
+
+      <h3 class="text-xl font-medium mb-3">Búsquedas Básicas</h3>
+      <div class="space-y-3 mb-6">
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">maria</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Busca "maria" en todos los campos de texto</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">nombre: juan</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Busca "juan" solo en el campo de nombre</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">id: 1234567890</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Busca por número de identificación exacto</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-medium mb-3">Búsquedas Combinadas (AND)</h3>
+      <div class="space-y-3 mb-6">
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">mesa: 16, rol: líder</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Líderes asignados a la mesa 16</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">puesto: Universidad Central, juan</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Personas llamadas "juan" en Universidad Central</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">referido: 1234567890, mesa: 12</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Votantes de la mesa 12 referidos por la cédula 1234567890</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-medium mb-3">Casos de Uso Avanzados</h3>
+      <div class="space-y-3">
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">rol: coordinador, puesto: Colegio San José</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Todos los coordinadores del Colegio San José</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">telefono: 300, rol: testigo</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Testigos con teléfonos que contienen "300"</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">mesa: 8, garcia</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Personas con apellido "garcia" en la mesa 8</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">cc: 52, nombre: ana, rol: lider</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Líderes llamadas "ana" con cédula que contiene "52"</p>
+        </div>
+      </div>
+
+      <div class="bg-yellow-500/10 border-l-4 border-yellow-500 p-4 rounded mt-4">
+        <p class="text-sm">
+          <strong>⚠️ Importante:</strong> Todos los filtros se combinan con lógica <strong>AND</strong>.
+          Para encontrar un resultado, debe cumplir <em>todos</em> los criterios especificados.
+        </p>
+      </div>
+    </section>
+
+    <!-- Sección: Modelo de Datos -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">🗄️ Modelo de Datos</h2>
+
+      <h3 class="text-xl font-medium mb-3">Campos Indexados</h3>
+      <p class="mb-3">El motor de búsqueda extrae y normaliza los siguientes datos de cada fila:</p>
+      <ul class="list-disc list-inside space-y-2 ml-4">
+        <li><strong>Nombre completo:</strong> Combinación de nombres y apellidos</li>
+        <li><strong>Identificación:</strong> Número de documento</li>
+        <li><strong>Teléfono:</strong> Número de contacto</li>
+        <li><strong>Puesto de votación:</strong> Lugar asignado</li>
+        <li><strong>Mesa:</strong> Número de mesa electoral</li>
+        <li><strong>Rol:</strong> Función dentro de la organización</li>
+        <li><strong>Referido por:</strong> Identificación del referente (cargado dinámicamente)</li>
+      </ul>
+
+      <h3 class="text-xl font-medium mb-3 mt-6">Carga de Referentes</h3>
+      <p class="mb-2">Los datos de referentes se cargan de forma asíncrona mediante:</p>
+      <div class="bg-muted p-3 rounded">
+        <code class="text-sm">GET /votantes/referente/{identificacion}</code>
+      </div>
+      <p class="text-sm text-muted-foreground mt-2">
+        📍 Implementación en: <code>app/routes/votantes.py:39-47, 58-65</code>
+      </p>
+    </section>
+
+    <!-- Sección: Consideraciones Técnicas -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">⚙️ Consideraciones Técnicas</h2>
+
+      <div class="space-y-4">
+        <div>
+          <h3 class="text-lg font-medium mb-2">🖥️ Procesamiento del Cliente</h3>
+          <p class="text-sm">
+            El filtrado se realiza completamente en el navegador, sin consultas al servidor.
+            Esto proporciona respuestas instantáneas pero limita el rendimiento con grandes volúmenes de datos.
+          </p>
+          <div class="bg-orange-500/10 border-l-4 border-orange-500 p-3 rounded mt-2">
+            <p class="text-sm">
+              <strong>⚠️ Recomendación:</strong> Para más de 1000 registros, considerar implementar
+              filtros del lado del servidor con paginación real.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium mb-2">📄 Paginación</h3>
+          <p class="text-sm">
+            La paginación controla la visibilidad de filas sin recomputar resultados.
+            Tamaño de página: <strong>25 registros</strong>.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium mb-2">🔍 Normalización</h3>
+          <p class="text-sm">
+            Todos los textos se normalizan eliminando acentos y convirtiendo a minúsculas
+            para búsquedas más flexibles e intuitivas.
+          </p>
+        </div>
+
+        <div>
+          <h3 class="text-lg font-medium mb-2">❌ Manejo de Errores</h3>
+          <ul class="list-disc list-inside space-y-1 ml-4 text-sm">
+            <li>Sintaxis inválida: se muestra mensaje de error</li>
+            <li>Sin resultados: se muestra mensaje "Sin resultados"</li>
+            <li>Campos no reconocidos: se ignoran silenciosamente</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sección: Referencias de Código -->
+    <section class="mb-8 rounded-lg border border-border bg-card p-6">
+      <h2 class="text-2xl font-semibold mb-4">📚 Referencias de Código</h2>
+
+      <h3 class="text-xl font-medium mb-3">Template Principal</h3>
+      <div class="bg-muted p-3 rounded mb-4">
+        <code class="text-sm">app/templates/votantes/listar.html:209-310</code>
+      </div>
+
+      <h3 class="text-xl font-medium mb-3">Rutas Backend</h3>
+      <div class="space-y-2">
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm">app/routes/votantes.py:39-47</code>
+          <p class="text-xs text-muted-foreground mt-1">Endpoint de carga de referentes</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm">app/routes/votantes.py:58-65</code>
+          <p class="text-xs text-muted-foreground mt-1">Lógica de búsqueda de referentes</p>
+        </div>
+      </div>
+
+      <h3 class="text-xl font-medium mb-3 mt-6">Estilos</h3>
+      <div class="bg-muted p-3 rounded">
+        <code class="text-sm">app/static/css/input.css</code>
+        <p class="text-xs text-muted-foreground mt-1">Estilos para badges y componentes de paginación</p>
+      </div>
+    </section>
+
+    <!-- Navegación -->
+    <nav class="mt-8 pt-6 border-t border-border">
+      <h3 class="text-sm font-semibold mb-3 text-muted-foreground">Documentación Relacionada</h3>
+      <div class="flex flex-wrap gap-3">
+        <a href="/documentacion/"
+          class="px-4 py-2 bg-accent text-accent-foreground rounded-md hover:bg-accent/80 transition-colors text-sm font-medium">
+          📖 Índice
+        </a>
+        <a href="/documentacion/modelo-datos"
+          class="px-4 py-2 border border-border rounded-md hover:bg-muted transition-colors text-sm">
+          Modelo de Datos
+        </a>
+        <a href="/documentacion/base-datos"
+          class="px-4 py-2 border border-border rounded-md hover:bg-muted transition-colors text-sm">
+          Base de Datos
+        </a>
+        <a href="/documentacion/templates"
+          class="px-4 py-2 border border-border rounded-md hover:bg-muted transition-colors text-sm">
+          Templates
+        </a>
+      </div>
+    </nav>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Doc: Templates{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background text-foreground">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-3xl font-bold mb-6">Sistema de Templates</h1>
+    <article class="rounded-md border border-border p-6 bg-card">
+      <pre class="text-sm whitespace-pre-wrap">
+# Herencia
+- base.html define estilos y carga de scripts globales
+- listar.html extiende base y define bloques de contenido y extra_js
+
+## Referencias
+- d:\CODE\CODE\URNA\app\templates\base.html:1-64
+- d:\CODE\CODE\URNA\app\templates\votantes\listar.html:1-310
+
+# Componentes
+- Navbar modular y bloques reutilizables
+
+# Ejemplo
+```jinja2
+{% raw %}{% extends "base.html" %}
+{% block content %}
+  <!-- contenido -->
+{% endblock %}
+{% block extra_js %}
+  <script>/* lógica de búsqueda */</script>
+{% endblock %}{% endraw %}
+```
+
+# Notas
+- Mantener scripts globales en base.html (p.ej., font-geist.js)
+- Evitar dependencias directas en templates hijos
+
+</pre>
+    </article>
+    <div class="mt-6 flex gap-3">
+      <a href="/documentacion/" class="text-sm underline">Índice</a>
+      <a href="/documentacion/busqueda" class="text-sm underline">Arquitectura de Búsqueda</a>
+      <a href="/documentacion/modelo-datos" class="text-sm underline">Modelo de Datos</a>
+      <a href="/documentacion/base-datos" class="text-sm underline">Base de Datos</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

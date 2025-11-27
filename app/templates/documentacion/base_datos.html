@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Doc: Base de Datos{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background text-foreground">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-3xl font-bold mb-6">Base de Datos y Sesiones</h1>
+    <article class="rounded-md border border-border p-6 bg-card">
+<pre class="text-sm whitespace-pre-wrap">
+# Configuración
+- SQLModel + PostgreSQL async
+- SessionMiddleware para sesiones de usuario
+
+## Referencias de código
+- d:\CODE\CODE\URNA\app\config\db.py:1-53
+- d:\CODE\CODE\URNA\app\__init__.py:27-80
+
+# Consultas relevantes
+- Listado de usuarios con búsqueda server-side básica y carga de referentes
+  - d:\CODE\CODE\URNA\app\routes\votantes.py:1-73
+  - d:\CODE\CODE\URNA\app\routes\votantes.py:39-47 (referentes)
+
+# Diagrama
+```mermaid
+sequenceDiagram
+  participant Client
+  participant FastAPI
+  participant DB
+  Client->>FastAPI: GET /votantes?q=
+  FastAPI->>DB: select Usuario (y referentes)
+  DB-->>FastAPI: resultados
+  FastAPI-->>Client: Template HTML
+```
+
+</pre>
+    </article>
+    <div class="mt-6 flex gap-3">
+      <a href="/documentacion/" class="text-sm underline">Índice</a>
+      <a href="/documentacion/busqueda" class="text-sm underline">Arquitectura de Búsqueda</a>
+      <a href="/documentacion/modelo-datos" class="text-sm underline">Modelo de Datos</a>
+      <a href="/documentacion/templates" class="text-sm underline">Templates</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

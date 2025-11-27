@@ -54,6 +54,15 @@ def test_busqueda_persistencia_valor_en_input():
     assert 'value="Juan"' in r.text
 
 
+def test_listar_incluye_parser_y_badges():
+    app.dependency_overrides[obtener_sesion] = fake_obtener_sesion
+    client = TestClient(app)
+    r = client.get("/votantes/")
+    assert r.status_code == 200
+    assert 'id="filter-badges"' in r.text
+    assert 'function parseFilters' in r.text
+
+
 def test_nuevo_votante_redirige_si_no_autenticado():
     client = TestClient(app)
     r = client.get("/votantes/nuevo", allow_redirects=False)

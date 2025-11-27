@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Doc: Modelo de Datos{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background text-foreground">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-3xl font-bold mb-6">Modelo de Datos</h1>
+    <article class="rounded-md border border-border p-6 bg-card">
+<pre class="text-sm whitespace-pre-wrap">
+# Entidad Usuario
+- PK: identificacion (6-10 dígitos)
+- nombres, apellidos
+- telefono (10 dígitos, inicia en 3)
+- edad (18-120)
+- sexo (enum)
+- correoelectronico
+- barrio_vereda, lugar_votacion, mesa_votacion
+- rol (enum jerárquico)
+- asignado_a (identificación del referente)
+
+## Validaciones
+- regex y rangos definidos en el modelo
+
+## Referencias de código
+- d:\CODE\CODE\URNA\app\models\usuario.py:1-125
+
+# Relaciones
+- `asignado_a` referencia `usuario.identificacion` (jerarquía)
+
+# Uso en Búsqueda
+- Campos visibles y normalizados: nombre, id, teléfono, puesto, mesa, rol, referido.
+
+</pre>
+    </article>
+    <div class="mt-6 flex gap-3">
+      <a href="/documentacion/" class="text-sm underline">Índice</a>
+      <a href="/documentacion/busqueda" class="text-sm underline">Arquitectura de Búsqueda</a>
+      <a href="/documentacion/base-datos" class="text-sm underline">Base de Datos</a>
+      <a href="/documentacion/templates" class="text-sm underline">Templates</a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+

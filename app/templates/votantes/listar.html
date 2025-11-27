@@ -39,6 +39,8 @@
                     class="block w-full rounded-md border border-input bg-background py-4 pl-10 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring transition-colors"
                     placeholder="Buscar por nombre, cédula o teléfono...">
             </form>
+            <div id="filter-badges" class="flex flex-wrap gap-2"></div>
+            <div id="filter-error" class="text-xs text-destructive"></div>
         </div>
 
         <!-- Table Container -->
@@ -188,6 +190,7 @@
                 <p class="text-sm text-muted-foreground">
                     Total de registros: <span id="search-count" class="mt-2 text-xs text-muted-foreground margin-block-start: 0.5rem"> </span>
                 </p>
+                <div id="pagination" class="mt-3 flex items-center gap-2"></div>
             </div>
         </div>
     </div>
@@ -201,22 +204,132 @@
     const rows = Array.from(tbody.querySelectorAll('tr')).filter(r => r.id !== 'no-results');
     const noResults = document.getElementById('no-results');
     const countEl = document.getElementById('search-count');
+    const badgesEl = document.getElementById('filter-badges');
+    const errorEl = document.getElementById('filter-error');
+    const paginationEl = document.getElementById('pagination');
 
     function normalize(s) {
         return (s || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
     }
 
     let timer = null;
-    function applyFilter() {
-        const q = normalize(input.value);
+    function parseFilters(value) {
+        const raw = (value || '').trim();
+        const result = { filters: [], tokens: [], error: null };
+        if (!raw) return result;
+        const cleaned = raw.replace(/[()]/g, '');
+        const parts = cleaned.split(',').map(p => p.trim()).filter(Boolean);
+        for (const part of parts) {
+            const idx = part.indexOf(':');
+            if (idx !== -1) {
+                const key = normalize(part.slice(0, idx));
+                const val = part.slice(idx + 1).trim();
+                if (!val) { result.error = 'Sintaxis inválida: valor vacío'; continue; }
+                result.filters.push({ key, value: val });
+            } else {
+                result.tokens.push(part);
+            }
+        }
+        return result;
+    }
+
+    const keyMap = {
+        'nombre': 'name', 'nombres': 'name', 'apellidos': 'name', 'votante': 'name',
+        'identificacion': 'id', 'id': 'id', 'cc': 'id',
+        'telefono': 'phone',
+        'puesto': 'place', 'lugar': 'place', 'lugar_votacion': 'place',
+        'mesa': 'table', 'mesa_votacion': 'table',
+        'rol': 'role',
+        'referido': 'ref', 'asignado_a': 'ref', 'referente': 'ref',
+    };
+
+    function getRowData(row) {
+        const nameEl = row.querySelector('.font-medium.text-foreground');
+        const idEl = row.querySelector('.id-badge');
+        const phoneEl = row.children[1]?.querySelector('span, a');
+        const placeEl = row.children[2]?.querySelector('span');
+        const tableEl = row.children[3]?.querySelector('span');
+        const roleEl = row.children[4]?.querySelector('span');
+        const refEl = row.children[5]?.querySelector('.ref-name, span');
+        return {
+            name: normalize(nameEl?.getAttribute('data-fullname') || nameEl?.textContent || ''),
+            id: normalize(idEl?.getAttribute('data-id') || ''),
+            phone: normalize(phoneEl?.textContent || ''),
+            place: normalize(placeEl?.textContent || ''),
+            table: normalize(tableEl?.textContent || ''),
+            role: normalize(roleEl?.textContent || ''),
+            ref: normalize(refEl?.textContent || ''),
+            text: normalize(row.textContent || ''),
+        };
+    }
+
+    function renderBadges(parsed) {
+        badgesEl.innerHTML = '';
+        if (parsed.filters.length === 0 && parsed.tokens.length === 0) return;
+        const frag = document.createDocumentFragment();
+        parsed.filters.forEach(f => {
+            const b = document.createElement('span');
+            b.className = 'filter-badge';
+            b.textContent = `${f.key}: ${f.value}`;
+            frag.appendChild(b);
+        });
+        parsed.tokens.forEach(t => {
+            const b = document.createElement('span');
+            b.className = 'filter-badge';
+            b.textContent = t;
+            frag.appendChild(b);
+        });
+        badgesEl.appendChild(frag);
+    }
+
+    const PAGE_SIZE = 25;
+    let currentPage = 1;
+
+    function renderPagination(total) {
+        paginationEl.innerHTML = '';
+        const pages = Math.ceil(total / PAGE_SIZE) || 1;
+        if (pages <= 1) return;
+        const prev = document.createElement('button');
+        prev.className = 'page-btn';
+        prev.textContent = 'Anterior';
+        prev.disabled = currentPage === 1;
+        prev.addEventListener('click', () => { currentPage = Math.max(1, currentPage - 1); applyFilter(true); });
+        const next = document.createElement('button');
+        next.className = 'page-btn';
+        next.textContent = 'Siguiente';
+        next.disabled = currentPage === pages;
+        next.addEventListener('click', () => { currentPage = Math.min(pages, currentPage + 1); applyFilter(true); });
+        const info = document.createElement('span');
+        info.className = 'page-info';
+        info.textContent = `Página ${currentPage} de ${pages}`;
+        paginationEl.appendChild(prev);
+        paginationEl.appendChild(info);
+        paginationEl.appendChild(next);
+    }
+
+    function applyFilter(skipResetPage) {
+        const parsed = parseFilters(input.value);
+        errorEl.textContent = parsed.error || '';
+        renderBadges(parsed);
         let visible = 0;
-        if (!q) {
+        if (!parsed.filters.length && !parsed.tokens.length) {
             rows.forEach(r => r.classList.remove('hidden'));
             visible = rows.length;
         } else {
             rows.forEach(r => {
-                const text = normalize(r.textContent);
-                const match = text.indexOf(q) !== -1;
+                const data = getRowData(r);
+                let match = true;
+                for (const f of parsed.filters) {
+                    const k = keyMap[f.key] || f.key;
+                    const val = normalize(f.value);
+                    if (!data[k] || data[k].indexOf(val) === -1) { match = false; break; }
+                }
+                if (match && parsed.tokens.length) {
+                    for (const t of parsed.tokens) {
+                        const token = normalize(t);
+                        if (data.text.indexOf(token) === -1) { match = false; break; }
+                    }
+                }
                 if (match) {
                     r.classList.remove('hidden');
                     visible += 1;
@@ -228,6 +341,17 @@
         if (noResults) {
             if (visible === 0) noResults.classList.remove('hidden'); else noResults.classList.add('hidden');
         }
+        if (!skipResetPage) currentPage = 1;
+        renderPagination(visible);
+        const start = (currentPage - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+        let idx = 0;
+        rows.forEach(r => {
+            if (r.classList.contains('hidden')) return;
+            const shouldHide = idx < start || idx >= end;
+            r.classList.toggle('hidden-page', shouldHide);
+            idx += 1;
+        });
         if (countEl) {
             countEl.textContent = visible ? `${visible} resultado(s)` : '0 resultados';
         }

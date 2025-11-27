@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Documentación{% endblock %}
+
+{% block content %}
+<div class="min-h-screen bg-background text-foreground">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-10">
+    <h1 class="text-3xl font-bold mb-6">Documentación del Sistema de Búsqueda</h1>
+    <p class="text-sm text-muted-foreground mb-6">Navegue por las secciones para conocer la arquitectura, el modelo de datos y la integración en templates.</p>
+    <nav class="grid sm:grid-cols-2 gap-4 mb-10">
+      <a href="/documentacion/busqueda" class="rounded-md border border-border p-4 hover:bg-muted/50 transition-colors">
+        <div class="font-semibold">Arquitectura de Búsqueda</div>
+        <div class="text-xs text-muted-foreground">Parser, filtros, paginación y visualización.</div>
+      </a>
+      <a href="/documentacion/modelo-datos" class="rounded-md border border-border p-4 hover:bg-muted/50 transition-colors">
+        <div class="font-semibold">Modelo de Datos</div>
+        <div class="text-xs text-muted-foreground">Estructura `Usuario`, relaciones y validaciones.</div>
+      </a>
+      <a href="/documentacion/base-datos" class="rounded-md border border-border p-4 hover:bg-muted/50 transition-colors">
+        <div class="font-semibold">Base de Datos</div>
+        <div class="text-xs text-muted-foreground">Esquema, sesiones y consultas.</div>
+      </a>
+      <a href="/documentacion/templates" class="rounded-md border border-border p-4 hover:bg-muted/50 transition-colors">
+        <div class="font-semibold">Sistema de Templates</div>
+        <div class="text-xs text-muted-foreground">Herencia, bloques y componentes.</div>
+      </a>
+    </nav>
+
+    <article class="rounded-md border border-border p-6 bg-card">
+      <h2 class="text-xl font-semibold mb-4">Guía Rápida</h2>
+      <pre class="text-sm whitespace-pre-wrap">
+# Búsqueda avanzada
+- Sintaxis: campo: valor, campo2: valor2, token libre
+- Campos: votante|nombre|nombres|apellidos, identificacion|id|cc, telefono, puesto|lugar|lugar_votacion, mesa|mesa_votacion, rol, referido|asignado_a|referente
+
+## Ejemplos
+- mesa: 16, rol: líder
+- puesto: Universidad Central, juan
+      </pre>
+    </article>
+  </div>
+</div>
+{% endblock %}
+

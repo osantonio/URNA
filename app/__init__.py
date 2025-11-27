@@ -132,8 +132,9 @@ templates = CustomJinja2Templates(directory="app/templates")
 __all__ = ["app", "templates"]
 
 # Registrar rutas (DESPUÉS de definir templates)
-from app.routes import index_router, auth_router, votantes_router  # noqa: E402
+from app.routes import index_router, auth_router, votantes_router, documentacion_router  # noqa: E402
 
 app.include_router(index_router)
 app.include_router(auth_router)
 app.include_router(votantes_router)
+app.include_router(documentacion_router)
