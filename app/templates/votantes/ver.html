@@ -21,7 +21,7 @@
         <div class="bg-card border border-border rounded-lg p-6 mb-6">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-3xl font-bold mb-2">{{ usuario.nombre_completo }}</h1>
+                    <h1 id="perfil-nombre" class="text-3xl font-bold mb-2" data-fullname="{{ usuario.nombre_completo }}" data-nombres="{{ usuario.nombres }}" data-apellidos="{{ usuario.apellidos }}">{{ usuario.nombre_completo }}</h1>
                     <div class="flex items-center gap-3">
                         <div class="id-badge" data-id="{{ usuario.identificacion }}" tabindex="0" role="button"
                             aria-label="Copiar identificación">
@@ -107,7 +107,7 @@
                         <p class="text-xs text-muted-foreground font-medium mb-1">Referido por</p>
                         {% if referente %}
                         <a href="/votantes/{{ referente.identificacion }}" class="text-sm text-primary hover:underline">
-                            {{ referente.nombre_completo }}
+                            <span class="ref-name" data-ref-fullname="{{ referente.nombre_completo }}" data-ref-nombres="{{ referente.nombres }}" data-ref-apellidos="{{ referente.apellidos }}">{{ referente.nombre_completo }}</span>
                         </a>
                         {% else %}
                         <p class="text-sm text-muted-foreground">—</p>
@@ -182,7 +182,7 @@
                                         title="{% if persona.tiene_referidos %}Expandir{% else %}Sin referidos{% endif %}">
                                         {% if persona.tiene_referidos %}[▶]{% else %}👤{% endif %}
                                     </span>
-                                    <div class="font-medium text-foreground">{{ persona.nombre_completo }}</div>
+                                    <div class="font-medium text-foreground" data-fullname="{{ persona.nombre_completo }}" data-nombres="{{ persona.nombres }}" data-apellidos="{{ persona.apellidos }}">{{ persona.nombre_completo }}</div>
                                     <div class="relative">
                                         <div class="id-badge id-badge--compact" data-id="{{ persona.identificacion }}"
                                             tabindex="0" role="button" aria-label="Copiar identificación">
@@ -344,6 +344,52 @@
         }
     }
 
+    function renderShortHeaderAndRef() {
+        const h = document.getElementById('perfil-nombre');
+        if (h) {
+            const nombres = (h.getAttribute('data-nombres') || '').trim();
+            const apellidos = (h.getAttribute('data-apellidos') || '').trim();
+            const full = (h.getAttribute('data-fullname') || '').trim();
+            const firstName = nombres ? nombres.split(/\s+/)[0] : '';
+            const firstLast = apellidos ? apellidos.split(/\s+/)[0] : '';
+            h.textContent = `${firstName} ${firstLast}`.trim();
+            const hidden = document.createElement('span');
+            hidden.className = 'hidden';
+            hidden.textContent = full;
+            h.appendChild(hidden);
+        }
+        const refCells = Array.from(document.querySelectorAll('.ref-name'));
+        refCells.forEach(el => {
+            const nombres = (el.getAttribute('data-ref-nombres') || '').trim();
+            const apellidos = (el.getAttribute('data-ref-apellidos') || '').trim();
+            const full = (el.getAttribute('data-ref-fullname') || '').trim();
+            const firstName = nombres ? nombres.split(/\s+/)[0] : '';
+            const firstLast = apellidos ? apellidos.split(/\s+/)[0] : '';
+            el.textContent = `${firstName} ${firstLast}`.trim();
+            const hidden = document.createElement('span');
+            hidden.className = 'hidden';
+            hidden.textContent = full;
+            el.appendChild(hidden);
+        });
+    }
+
+    function renderShortTreeNames() {
+        const nameCells = Array.from(document.querySelectorAll('#referidos-body .font-medium.text-foreground'));
+        nameCells.forEach(el => {
+            const nombres = (el.getAttribute('data-nombres') || '').trim();
+            const apellidos = (el.getAttribute('data-apellidos') || '').trim();
+            const full = (el.getAttribute('data-fullname') || '').trim();
+            if (!nombres && !apellidos) return;
+            const firstName = nombres ? nombres.split(/\s+/)[0] : '';
+            const firstLast = apellidos ? apellidos.split(/\s+/)[0] : '';
+            el.textContent = `${firstName} ${firstLast}`.trim();
+            const hidden = document.createElement('span');
+            hidden.className = 'hidden';
+            hidden.textContent = full;
+            el.appendChild(hidden);
+        });
+    }
+
     function createGroupRow(rol, count, parentId, nivel) {
         const tr = document.createElement('tr');
         tr.className = 'tree-group-row bg-muted/30';
@@ -401,13 +447,17 @@
                         : persona.rol === 'Activista' ? 'bg-yellow-50 text-yellow-800 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-300 dark:border-yellow-800'
                             : 'bg-secondary text-secondary-foreground border-border';
 
+        const firstName = (persona.nombres || '').trim().split(/\s+/)[0] || '';
+        const firstLast = (persona.apellidos || '').trim().split(/\s+/)[0] || '';
+        const shortName = `${firstName} ${firstLast}`.trim();
+
         tr.innerHTML = `
             <td class="px-6 py-4">
                 <div class="flex items-center gap-2" style="padding-left: ${paddingLeft}rem;">
                     <span class="tree-person__icon cursor-pointer" onclick="togglePersonRow(this)" title="${persona.tiene_referidos ? 'Expandir' : 'Sin referidos'}">
                         ${icon}
                     </span>
-                    <div class="font-medium text-foreground">${persona.nombre_completo}</div>
+                    <div class="font-medium text-foreground" data-fullname="${persona.nombre_completo}" data-nombres="${persona.nombres || ''}" data-apellidos="${persona.apellidos || ''}">${shortName}<span class="hidden">${persona.nombre_completo}</span></div>
                     <div class="relative">
                         <div class="id-badge id-badge--compact" data-id="${persona.identificacion}" tabindex="0" role="button" aria-label="Copiar identificación">
                             <span class="id-prefix">CC</span><span class="id-number">${persona.identificacion}</span>
@@ -466,6 +516,8 @@
         });
     }
 
+    renderShortHeaderAndRef();
+    renderShortTreeNames();
     wireCopyIds();
 </script>
 {% endblock %}
