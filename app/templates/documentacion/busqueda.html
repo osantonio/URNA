@@ -155,6 +155,12 @@ flowchart LR
               </td>
               <td class="border border-border px-4 py-2">Identificación del referente asignado</td>
             </tr>
+            <tr>
+              <td class="border border-border px-4 py-2"><strong>sexo</strong></td>
+              <td class="border border-border px-4 py-2"><code class="text-xs">sexo, genero</code></td>
+              <td class="border border-border px-4 py-2">Sexo del votante (acepta abreviaciones: m, f, h, mujer, hombre,
+                masculino, femenino)</td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -203,6 +209,22 @@ flowchart LR
         </div>
       </div>
 
+      <h3 class="text-xl font-medium mb-3">Búsquedas por Sexo</h3>
+      <div class="space-y-3 mb-6">
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">sexo:m</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Todos los votantes masculinos (abreviación)</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">genero:mujer, rol:líder</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Líderes femeninas</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm font-mono">sexo:f, mesa:5, puesto:Centro</code>
+          <p class="text-sm mt-1 text-muted-foreground">→ Mujeres de la mesa 5 en centros de votación</p>
+        </div>
+      </div>
+
       <h3 class="text-xl font-medium mb-3">Casos de Uso Avanzados</h3>
       <div class="space-y-3">
         <div class="bg-muted p-3 rounded">
@@ -245,6 +267,7 @@ flowchart LR
         <li><strong>Mesa:</strong> Número de mesa electoral</li>
         <li><strong>Rol:</strong> Función dentro de la organización</li>
         <li><strong>Referido por:</strong> Identificación del referente (cargado dinámicamente)</li>
+        <li><strong>Sexo:</strong> Género del votante (soporta múltiples variaciones)</li>
       </ul>
 
       <h3 class="text-xl font-medium mb-3 mt-6">Carga de Referentes</h3>
@@ -307,9 +330,21 @@ flowchart LR
     <section class="mb-8 rounded-lg border border-border bg-card p-6">
       <h2 class="text-2xl font-semibold mb-4">📚 Referencias de Código</h2>
 
+      <h3 class="text-xl font-medium mb-3">Módulos JavaScript</h3>
+      <div class="space-y-2 mb-4">
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm">app/static/js/votantes/filters.js</code>
+          <p class="text-xs text-muted-foreground mt-1">Lógica de filtrado y normalización de sexo</p>
+        </div>
+        <div class="bg-muted p-3 rounded">
+          <code class="text-sm">app/static/js/votantes/main.js</code>
+          <p class="text-xs text-muted-foreground mt-1">Orquestación principal</p>
+        </div>
+      </div>
+
       <h3 class="text-xl font-medium mb-3">Template Principal</h3>
       <div class="bg-muted p-3 rounded mb-4">
-        <code class="text-sm">app/templates/votantes/listar.html:209-310</code>
+        <code class="text-sm">app/templates/votantes/listar.html</code>
       </div>
 
       <h3 class="text-xl font-medium mb-3">Rutas Backend</h3>

@@ -45,6 +45,31 @@ export function parseFilters(value) {
 }
 
 /**
+ * Normaliza valores de sexo para permitir abreviaciones y sinónimos
+ */
+function normalizeSexValue(value) {
+    const normalized = normalize(value);
+
+    // Mapeo de abreviaciones y sinónimos a valores estándar
+    const sexMap = {
+        // Masculino
+        'm': 'masculino',
+        'h': 'masculino',
+        'hombre': 'masculino',
+        'male': 'masculino',
+        'masculino': 'masculino',
+
+        // Femenino
+        'f': 'femenino',
+        'mujer': 'femenino',
+        'female': 'femenino',
+        'femenino': 'femenino',
+    };
+
+    return sexMap[normalized] || normalized;
+}
+
+/**
  * Extrae datos de una fila para filtrado
  */
 export function getRowData(row) {
@@ -65,7 +90,7 @@ export function getRowData(row) {
         table: normalize(tableEl?.textContent || ''),
         role: normalize(roleEl?.textContent || ''),
         ref: normalize(refEl?.textContent || ''),
-        sex: normalize(sexo),
+        sex: normalizeSexValue(sexo),
         text: normalize(row.textContent || ''),
     };
 }
@@ -110,7 +135,8 @@ export function applyFilters(parsed, rows, keyMap) {
 
         for (const f of parsed.filters) {
             const k = keyMap[f.key] || f.key;
-            const val = normalize(f.value);
+            // Normalizar el valor de búsqueda de sexo para soportar abreviaciones
+            const val = k === 'sex' ? normalizeSexValue(f.value) : normalize(f.value);
             if (!data[k] || data[k].indexOf(val) === -1) {
                 match = false;
                 break;
